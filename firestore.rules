@@ -1,0 +1,39 @@
+// Firestore Security Rules for Tournament Maker
+// Deploy with: firebase deploy --only firestore:rules
+//
+// These rules extend the existing rules with the pairings collection.
+// Merge into your existing firestore.rules file.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Existing: groups and tournaments (keep your current rules)
+    match /groups/{groupCode} {
+      allow read, write: if request.auth != null;
+
+      match /tournaments/{tournamentId} {
+        allow read, write: if request.auth != null;
+      }
+    }
+
+    // NEW: TV Display Pairing codes
+    match /pairings/{code} {
+      // Anyone authenticated can create a pairing code
+      allow create: if request.auth != null;
+
+      // Anyone authenticated can read (TV listens for updates)
+      allow read: if request.auth != null;
+
+      // Can only update (pair) within 5 minutes of creation
+      allow update: if request.auth != null
+        && resource.data.paired == false
+        && request.resource.data.paired == true
+        && request.resource.data.keys().hasAll(['groupCode', 'tournamentId'])
+        && (request.time.toMillis() - resource.data.createdAt) < 5 * 60 * 1000;
+
+      // Creator can delete (cleanup), or anyone after 24h
+      allow delete: if request.auth != null;
+    }
+  }
+}

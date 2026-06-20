@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#4a90e2" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="/tournament-maker/manifest.json" />
+  <link rel="icon" href="/tournament-maker/icon-192.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/tournament-maker/icon-192.svg" />
+  <meta name="description" content="Generate fair badminton doubles tournament schedules, track live scores, and view player statistics." />
+  <title>Tournament Maker</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/index.tsx"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/tournament-maker/sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>
